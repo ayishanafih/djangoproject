@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Course</title>
+    <style>
+        /* Your CSS styling */
+    </style>
+</head>
+<body>
+    {% extends 'admin/dashboard.html' %}
+
+    {% block mynav %}
+    <section class="home-section">
+        <h2>Are you sure you want to delete the course: {{ course.course_name }}?</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'view_course' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </section>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <style>
+        /* General page styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+}
+
+form {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    margin-top: -600px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Form elements styling */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+select,
+input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Responsive styling */
+@media (max-width: 600px) {
+    form {
+        padding: 15px;
+    }
+
+    button {
+        padding: 12px;
+    }
+}
+
+      </style>
+      <body>
+        {% extends 'admin/dashboard.html' %}
+    
+        {% block mynav %}
+            <p>Welcome to exam_startdate</p>
+            
+            <form method="POST" action="">
+              {% csrf_token %}
+                <div>
+                  <label for="courses">Choose a course:</label>
+                  <select id="courses" name="course_name" required>
+                    <option value="PDDM">PDDM</option>
+                    <option value="PCMB">PCMB</option>
+                    <option value="PCMC">PCMC</option>
+                    <option value="BSc.Maths">BSc.Maths</option>
+                    <option value="PGDCA">PGDCA</option>
+                    <option value="ACCA">ACCA</option>
+                    <option value="M.Pharm">M.Pharm</option>
+                  </select>
+                </div>
+    
+                <div>
+                    <label for="student_name">Student Name:</label>
+                    <select id="student_name" name="student_name" required>
+                      <option value="Ayisha">Ayisha</option>
+                      <option value="fathima">fathima</option>
+                      <option value="wakaz">wakaz</option>
+                      <option value="chechu">chechu</option>
+                    </select>
+                    
+                </div>
+    
+                <div>
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" id="start_date" name="start_date" required>
+                </div>
+    
+                <div>
+                    <label for="exam_date">Exam Date:</label>
+                    <input type="date" id="exam_date" name="exam_date" required>
+                </div>
+    
+                <div>
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+    
+        {% endblock %}
+    </body>
+    
+    </head>
+  </html>

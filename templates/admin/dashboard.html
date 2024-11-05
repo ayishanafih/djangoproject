@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+    * { font-family: "Montserrat", sans-serif; }
+
+    body {
+      background: #010100;
+      color: rgb(211, 200, 114);
+      
+    }
+
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      width: 260px;
+      background: #EEC48B;
+      opacity: 0.3;
+      border-radius: 50%;
+      z-index: -2;
+    }
+    
+    body::before {
+      height: 260px;
+      top: -60px;
+      left: 0;
+      transform: translateX(-50%);
+    }
+
+    body::after {
+      height: 900px;
+      bottom: 0px;
+      left: -100px;
+      transform: translateY(45%);
+    }
+
+    #bg-blur {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    
+      z-index: -1;
+      -webkit-backdrop-filter: blur(250px);
+      backdrop-filter: blur(250px);
+    }
+
+    nav {
+      padding: 36px;
+      width: 272px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+
+    nav h1 {
+      margin: 0;
+      font-size: 32px;
+      background: linear-gradient(90deg, #EEC48B, #947A58);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      width: fit-content;
+    }
+
+    nav div {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 32px 0 auto 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #9F9F9F;
+      font-size: 14px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+      transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+    }
+
+    nav a:hover {
+      background: rgba(233, 90, 90, 0.979);
+    }
+
+    nav a svg {
+      display: inline-block;
+      height: 20px;
+      width: 20px;
+      margin-right: 10px;
+    }
+
+    nav .collapse-menu {
+      display: none;
+      flex-direction: column;
+      padding-left: 20px;
+    }
+
+    nav a.collapsible:after {
+      content: '\25BC'; /* Arrow icon */
+      display: inline-block;
+      float: right;
+      margin-left: auto;
+    }
+
+    nav a.active.collapsible:after {
+      content: '\25B2'; /* Arrow icon flipped */
+    }
+
+    active-page {
+      color: #EEC48B;
+      background: rgba(227, 71, 71, 0.941);
+    }
+
+    active-page span {
+      background: #EEC48B;
+    }
+
+    nav button {
+      font-size: 14px;
+      font-weight: 700;
+      width: 100%;
+      padding: 12px;
+      border-radius: 5px;
+      border: none;
+      background: linear-gradient(90deg, #E1E1E1, #8F8F8F);
+      cursor: pointer;
+    }
+
+    .main-content {
+      margin-left: 300px; /* Adjust this margin to avoid overlap with the sidebar */
+      padding: 20px;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1>Admin</h1>
+    <div>
+      <!-- Courses Section -->
+      <a href="#" class="collapsible">Courses</a>
+      <div class="collapse-menu">
+        <a href="{% url 'add_course' %}">Add Course</a>
+        <a href="{% url 'view_course' %}">View Course</a>
+      </div>
+
+      <!-- Students Section -->
+      <a href="#" class="collapsible">Students</a>
+      <div class="collapse-menu">
+        <a href="{% url 'add_students' %}">Add Student</a>
+        <a href="{% url 'view_students' %}">View Students</a>
+      </div>
+
+      <!-- Exams Section -->
+      <a href="#" class="collapsible">Exams</a>
+      <div class="collapse-menu">
+        <div>
+          <a href="{% url 'exam_startdate'%}">Exam Start Date</a>
+          <a href="{% url 'view_examdate'%}">Exam End Date</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div id="bg-blur"></div>
+
+  <!-- Main Content Container -->
+  <div class="main-content">
+    {% block mynav %}
+  
+    <!-- Content from child templates like add_course.html will be injected here -->
+    {% endblock %}
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var coll = document.getElementsByClassName("collapsible");
+      for (var i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          if (content.style.display === "block") {
+            content.style.display = "none";
+          } else {
+            content.style.display = "block";
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

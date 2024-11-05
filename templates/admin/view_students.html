@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <style>
+        /* Make the table container responsive */
+        .main-content {
+          margin-left: 500px;
+          padding: 20px;
+          width: 100%;
+        }
+    
+        /* Position the table at the top */
+        body {
+          margin-right: -500px;
+          padding: 0;
+        }
+    
+        .main-content h2 {
+          margin-top: -600px;
+          margin-left: -750px;
+          text-align: center;
+        }
+    
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+          margin-left: -400px;
+        }
+    
+        th, td {
+          padding: 10px;
+          text-align: left;
+          border: 2px solid #ffffff;
+        }
+    
+        th {
+          background-color: #d60303;
+        }
+    
+        /* Responsive design */
+        @media (max-width: 600px) {
+          table, thead, tbody, th, td, tr {
+            display: block;
+            width: 100%;
+          }
+    
+          tr {
+            margin-bottom: 15px;
+          }
+    
+          td {
+            text-align: right;
+            padding-left: 50%;
+            position: relative;
+          }
+    
+          td:before {
+            content: attr(data-label);
+            position: absolute;
+            left: 10px;
+            width: 45%;
+            text-align: left;
+            font-weight: bold;
+          }
+        }
+      </style>
+      <body>
+        {% extends 'admin/dashboard.html' %}
+        {% block mynav %}
+        <div class="main-content">
+            <h2>View Students</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>Date of Birth</th>
+                        <th>Address</th>
+                        <th>Phone Number</th>
+                        <th>Actions</th> <!-- New column for buttons -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr id="student-{{ student.student_id }}">
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.student_name }}</td>
+                        <td>{{ student.course_name }}</td>
+                        <td>{{ student.dob }}</td>
+                        <td>{{ student.address }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>
+                            <!-- Edit and Delete Buttons -->
+                            <button onclick="editRow('{{ student.student_id }}')">Edit</button>
+                            <button onclick="deleteRow('{{ student.student_id }}')">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    
+        <!-- Script for inline editing and deleting -->
+        {% csrf_token %}
+<script>
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    function editRow(examId) {
+        const courseName = prompt("Enter new course name:");
+        const studentName = prompt("Enter new student name:");
+        const startDate = prompt("Enter new start date (YYYY-MM-DD):");
+        const examDate = prompt("Enter new exam date (YYYY-MM-DD):");
+
+        if (courseName && studentName && startDate && examDate) {
+            fetch(`/edit_exam/${examId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({
+                    course_name: courseName,
+                    student_name: studentName,
+                    start_date: startDate,
+                    exam_date: examDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`#exam-${examId} td[data-label="course_name"]`).innerText = courseName;
+                    document.querySelector(`#exam-${examId} td[data-label="student_name"]`).innerText = studentName;
+                    document.querySelector(`#exam-${examId} td[data-label="start_date"]`).innerText = startDate;
+                    document.querySelector(`#exam-${examId} td[data-label="exam_date"]`).innerText = examDate;
+                } else {
+                    alert("Failed to update exam data.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+
+    function deleteRow(examId) {
+        if (confirm("Are you sure you want to delete this exam?")) {
+            fetch(`/delete_exam/${examId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`exam-${examId}`).remove();
+                } else {
+                    alert("Failed to delete exam.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+</script>
+
+        {% endblock %}
+    </body>
+    
+    </head>
+  </html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam End Date Table</title>
+    <style>
+        /* Style for the body */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Style for the welcome message */
+        p {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fffcfc;
+            margin-top: -650px;
+            text-align: top;
+        }
+
+        /* Style for the table */
+        table {
+            width: 80%;
+            margin-top: -600px;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #d53434;
+        }
+
+        /* Header row style */
+        table thead th {
+            background-color: #a83843;
+            color: #ffffff;
+            padding: 10px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        /* Style for table cells */
+        table tbody td {
+            padding: 10px;
+            border-bottom: 3px solid #7719198f;
+        }
+
+        /* Style for table rows */
+        table tbody tr:nth-child(even) {
+            background-color: #e18989;
+        }
+
+        /* Hover effect for rows */
+        table tbody tr:hover {
+            background-color: #659b41;
+        }
+
+        /* Responsive styling */
+        @media screen and (max-width: 768px) {
+            table, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+            thead {
+                display: none;
+            }
+            tbody td {
+                display: flex;
+                justify-content: space-between;
+                padding: 15px;
+                border-bottom: 1px solid #ddd;
+            }
+            tbody td:before {
+                content: attr(data-label);
+                font-weight: bold;
+                text-transform: uppercase;
+                color: #007bff;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% extends 'admin/dashboard.html' %}
+
+    {% block mynav %}
+    <p>Welcome to exam_enddate</p>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Student Name</th>
+                <th>Start Date</th>
+                <th>Exam Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for exam in exam_data %}
+            <tr id="exam-{{ exam.id }}">
+                <td>{{ exam.course_name }}</td>
+                <td>{{ exam.student_name }}</td>
+                <td>{{ exam.start_date }}</td>
+                <td >{{ exam.exam_date }}</td>
+                <td>
+                    <button class="edit-btn" onclick="openEditModal({{ exam.id }}, '{{ exam.course_name }}', '{{ exam.student_name }}', '{{ exam.start_date }}', '{{ exam.exam_date }}')">Edit</button>
+                    <button class="delete-btn" onclick="deleteExam({{ exam.id }})">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+     <!-- Edit Modal -->
+ <div id="editModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Exam</h5>
+                <button type="button" class="close" onclick="closeEditModal()">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editExamForm">
+                    <input type="hidden" id="examId">
+                    <div class="form-group">
+                        <label for="courseName">Course Name</label>
+                        <input type="text" id="courseName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentName">Student Name</label>
+                        <input type="text" id="studentName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="examDate">Exam Date</label>
+                        <input type="date" id="examDate" class="form-control">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveExamChanges()">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function openEditModal(id, courseName, studentName, startDate, examDate) {
+        document.getElementById("examId").value = id;
+        document.getElementById("courseName").value = courseName;
+        document.getElementById("studentName").value = studentName;
+        document.getElementById("startDate").value = startDate;
+        document.getElementById("examDate").value = examDate;
+        document.getElementById("editModal").style.display = 'block';
+    }
+
+    function closeEditModal() {
+        document.getElementById("editModal").style.display = 'none';
+    }
+
+    function saveExamChanges() {
+        const examId = document.getElementById("examId").value;
+        const courseName = document.getElementById("courseName").value;
+        const studentName = document.getElementById("studentName").value;
+        const startDate = document.getElementById("startDate").value;
+        const examDate = document.getElementById("examDate").value;
+
+        fetch(`/edit-exam/${examId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'course_name': courseName,
+                'student_name': studentName,
+                'start_date': startDate,
+                'exam_date': examDate
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.querySelector(`#exam-${examId} td:nth-child(1)`).textContent = courseName;
+                document.querySelector(`#exam-${examId} td:nth-child(2)`).textContent = studentName;
+                document.querySelector(`#exam-${examId} td:nth-child(3)`).textContent = startDate;
+                document.querySelector(`#exam-${examId} td:nth-child(4)`).textContent = examDate;
+                closeEditModal();
+                alert("Exam updated successfully!");
+            } else {
+                alert("Failed to update exam.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        });
+    }
+</script>
+    <script>
+        function deleteExam(examId) {
+            if (confirm("Are you sure you want to delete this exam?")) {
+                fetch(`/delete-exam/${examId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`exam-${examId}`).remove();
+                        alert("Exam deleted successfully!");
+                    } else {
+                        alert("Failed to delete exam.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred. Please try again.");
+                });
+            }
+        }
+    </script>
+
+    {% endblock %}
+</body>
+</html>

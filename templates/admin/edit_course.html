@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Course</title>
+    <style>
+        /* Your CSS styling */
+    </style>
+</head>
+<body>
+    {% extends 'admin/dashboard.html' %}
+
+    {% block mynav %}
+    <section class="home-section">
+        <h2>Edit Course</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </section>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Course Page</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f7f8;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 60px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 500px;
+        margin-top: 300px;
+        margin-left: -500px;
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    /* Apply same styling for all input, textarea, and select fields */
+    input[type="text"], input[type="date"], input[type="tel"], textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #218838;
+    }
+
+    @media (max-width: 500px) {
+        .form-container {
+            width: 100%;
+            padding: 15px;
+        }
+    }
+  </style>
+</head>
+<body>
+  {% extends 'admin/dashboard.html' %}
+
+  {% block mynav %}
+  <div class="main-content">
+    <div class="form-container">
+      <h2>Add Student</h2>
+
+        <!-- Display success message if available -->
+    {% if messages %}
+    <div class="message-box">
+      {% for message in messages %}
+        <p style="color: green;">{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Course Form -->
+    <form action="{% url 'add_students' %}" method="POST" id="myForm">
+      {% csrf_token %}
+      <label for="student_id">Student ID:</label>
+      <input type="text" id="student_id" name="student_id" required>
+      <label for="courses">Choose a course:</label>
+      <select id="courses" name="course_name" required>
+        <option value="PDDM">PDDM</option>
+        <option value="PCMB">PCMB</option>
+        <option value="PCMC">PCMC</option>
+        <option value="BSc.Maths">BSc.Maths</option>
+        <option value="PGDCA">PGDCA</option>
+        <option value="ACCA">ACCA</option>
+        <option value="M.Pharm">M.Pharm</option>
+      </select>
+
+      <label for="student_name">Student Name:</label>
+      <input type="text" id="student_name" name="student_name" required>
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob" required>
+
+      <label for="address">Address:</label>
+      <textarea id="address" name="address" rows="4" cols="50" required></textarea>
+
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required>
+
+      <button type="submit">Add</button>
+    </form>
+  </div>
+  </div>
+  {% endblock %}
+</body>
+</html>
